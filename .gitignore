@@ -22,4 +22,5 @@ node_modules
 *.sw?
 
 # Custom
+.env
 bot-server/build
