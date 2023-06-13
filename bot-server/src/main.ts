@@ -1,5 +1,6 @@
 import { Client, GatewayIntentBits, Message } from "discord.js";
 import dotenv from "dotenv";
+import generate from "./api/generate";
 
 dotenv.config();
 
@@ -20,6 +21,15 @@ client.on("messageCreate", async (message: Message) => {
   if (message.author.bot) return;
   if (message.content.startsWith("!ping")) {
     message.channel.send("Pong!");
+  } else if (message.content.startsWith("!")) {
+    const generated = await generate(message.content.substring(1));
+    console.log(generated);
+    message.channel.send(
+      generated?.reduce(
+        (data, current) => data?.concat(current.text || ""),
+        ""
+      ) || "error occurred"
+    );
   }
 });
 
