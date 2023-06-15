@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node src/main.ts",
+    "start": "nodemon --watch 'src/**/*.ts' --exec ts-node src/main.ts",
     "compile": "tsc -p ."
   },
   "keywords": [],
@@ -19,6 +19,7 @@
     "@types/node": "^20.3.1",
     "cspell": "^6.31.1",
     "eslint": "^8.42.0",
+    "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.3"
   }
