@@ -1,5 +1,7 @@
 qa.txt
 freetalk.txt
+qa.jsonl
+freetalk.jsonl
 
 .DS_Store
 .huskyrc.json
