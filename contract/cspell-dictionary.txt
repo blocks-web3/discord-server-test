@@ -1,0 +1,12 @@
+arrayify
+ASTAR
+davinci
+Hackathon
+IERC
+keccak
+localgeth
+nomicfoundation
+nomiclabs
+openai
+sepolia
+typechain

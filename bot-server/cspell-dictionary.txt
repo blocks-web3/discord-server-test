@@ -1,5 +1,8 @@
+APIKEY
 ASTAR
 davinci
 Hackathon
 IERC
+maticmum
 openai
+SECG
