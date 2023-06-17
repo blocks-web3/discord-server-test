@@ -1,3 +1,19 @@
+## Setup
+```
+pyenv install 3.11.3
+pyenv local 3.11.3
+poetry env use python
+poetry shell
+poetry install
+```
+
+## Usage
+```
+# https://platform.openai.com/account/api-keys から APIキーを取得
+export OPENAI_API_KEY=${API KEY}
+PYTHONPATH=./ python execute.py
+```
+
 ## Discordサーバの貢献度の評価観点に関して
 - 後述する観点の評価指標に基づいてスコアを算出し、任意の係数で重み付けした合計を貢献度とする。
 
@@ -35,10 +51,10 @@
 ## 貢献度の評価結果
 - 当該システムで分析した結果は以下のフォーマットでファイル出力を行う。
   - ランキング
-    - ファイル名：ranking_${rankingId}}.csv
+    - ファイル名：ranking_${rankingId}.json
     - カラム名：後述の概念モデル.ランキング 参照
   - ランキングユーザ詳細
-    - ファイル名：user_${userId}_${rankingId}.csv
+    - ファイル名：user_${userId}_${rankingId}.json
     - カラム名：後述の概念モデル.ランキングユーザ詳細 参照
 
 ## 概念モデル
