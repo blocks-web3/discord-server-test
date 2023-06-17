@@ -10,7 +10,9 @@ class IssueClassifier(BaseModel):
 
     def evaluate(self, messages) -> List[str]:
         input_data = self._format_messages(messages)
-        result = self.llm.predict(ISSUE_CLASSIFIER_PROMPT.format(messages=input_data))
+        prompt = ISSUE_CLASSIFIER_PROMPT.format(messages=input_data)
+        # print(prompt)
+        result = self.llm.predict(prompt)
         return self._format_result(result)
 
     def _format_messages(self, messages):
@@ -18,6 +20,7 @@ class IssueClassifier(BaseModel):
         for m in messages:
             id = m["id"]
             message = m["content"]
+            message = message.replace("\n", "\\n")
             text += f"id: {id}, message: {message}\n"
         return text
 

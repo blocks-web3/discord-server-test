@@ -2,6 +2,8 @@ qa.txt
 freetalk.txt
 qa.jsonl
 freetalk.jsonl
+data/*
+result/*
 
 .DS_Store
 .huskyrc.json
