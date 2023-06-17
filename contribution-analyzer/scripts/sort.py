@@ -12,4 +12,4 @@ sorted_data = sorted(data, key=lambda x: int(x["id"]))
 # 結果をファイルに書き込む
 with open("freetalk_sort.txt", "w", encoding="utf-8") as output_file:
     for item in sorted_data:
-        output_file.write(json.dumps(item, ensure_ascii=False) + '\n')
+        output_file.write(json.dumps(item, ensure_ascii=False) + "\n")
