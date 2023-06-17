@@ -1,0 +1,6 @@
+[submodule "token-gated-account/lib/contracts"]
+	path = token-gated-account/lib/contracts
+	url = https://github.com/thirdweb-dev/contracts
+[submodule "token-gated-account/lib/forge-std"]
+	path = token-gated-account/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std

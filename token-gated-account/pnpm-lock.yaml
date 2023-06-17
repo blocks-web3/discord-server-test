@@ -1,0 +1,13 @@
+lockfileVersion: 5.4
+
+specifiers:
+  '@thirdweb-dev/contracts': ^3
+
+dependencies:
+  '@thirdweb-dev/contracts': 3.5.7
+
+packages:
+
+  /@thirdweb-dev/contracts/3.5.7:
+    resolution: {integrity: sha512-YbHmkogtX6vJBE48L6svE9J/nfdK9X0NQY1Kdn5MS2fWMA7Iem2kdzk/7NW0a9TKpdSfp0VfYYGPyXtrBEmKLA==}
+    dev: false
