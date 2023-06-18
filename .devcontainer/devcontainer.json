@@ -6,6 +6,7 @@
   "customizations": {
     "vscode": {
       "extensions": [
+        "GitHub.copilot",
         "dsznajder.es7-react-js-snippets",
         "sohamkamani.code-eol",
         "esbenp.prettier-vscode",

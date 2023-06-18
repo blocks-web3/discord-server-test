@@ -4,6 +4,7 @@ import {
   ModalSubmitInteraction,
   SlashCommandBuilder,
 } from "discord.js";
+import getCollection from "./getCollection";
 import getRank from "./getRank";
 import mintNft from "./mintNft";
 import sample from "./sample";
@@ -15,5 +16,6 @@ type CustomCommand = {
     interaction: ModalSubmitInteraction<CacheType>
   ) => Promise<void>;
 };
-export default [sample, getRank, mintNft];
+
+export default [sample, getRank, mintNft, getCollection];
 export type { CustomCommand };

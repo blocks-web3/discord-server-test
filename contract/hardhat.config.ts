@@ -8,18 +8,11 @@ import "solidity-coverage";
 import dotenv from "dotenv";
 dotenv.config();
 
-const mnemonic =
-  process.env.PRIVATE_KEY ||
-  "hoge hoge hoge hoge hoge hoge hoge hoge hoge hoge hoge hoge";
-
 function getNetwork1(url: string) {
   if (process.env.PRIVATE_KEY) {
     return { url, accounts: [process.env.PRIVATE_KEY] };
   }
-  return {
-    url,
-    accounts: { mnemonic },
-  };
+  throw Error("not found PRIVATE_KEY");
 }
 
 function getNetwork(name: string) {
