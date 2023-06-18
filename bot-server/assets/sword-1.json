@@ -1,0 +1,9 @@
+{
+  "name": "Brave Sword - Empowerment Link Games Item",
+  "description": "Empowerment Link Games Item is game item. Owner can use this item to play game.",
+  "image": "https://gateway.pinata.cloud/ipfs/QmY48Nh8mcJZVZesPaNXvy7Bq3YKCJoaL1MPpFBWGPGTSL",
+  "attributes": [
+    { "trait_type": "Type", "value": "equipment" },
+    { "trait_type": "Rarity", "value": "Rare" }
+  ]
+}

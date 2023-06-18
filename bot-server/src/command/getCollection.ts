@@ -25,8 +25,6 @@ async function executeLogic(interaction: CommandInteraction<CacheType>) {
   const account = await getAccount(targetUser.id);
   const collection = await getCollection(account.walletContract.address);
 
-  console.log(collection);
-
   if (collection.length === 0) {
     const msg = [`${targetUser.username} has no tokens.`];
     await interaction.followUp({ content: msg.join("\n") });
@@ -34,7 +32,9 @@ async function executeLogic(interaction: CommandInteraction<CacheType>) {
     const msg = [
       `${targetUser.username}'s collection is here.`,
       ``,
-      collection,
+      collection
+        .map((item) => `[tokenId=${item.tokenId}](${item.metadata.image})`)
+        .join("\n"),
     ];
     await interaction.followUp({ content: msg.join("\n") });
   }
