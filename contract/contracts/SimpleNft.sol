@@ -24,7 +24,7 @@ contract SimpleNft is
     constructor() ERC721("SimpleNft", "sNft") {}
 
     function _baseURI() internal pure override returns (string memory) {
-        return "https://pin.ski/";
+        return "https://gateway.pinata.cloud/ipfs/";
     }
 
     function pause() public onlyOwner {

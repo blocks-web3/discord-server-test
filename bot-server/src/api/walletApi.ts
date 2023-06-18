@@ -1,9 +1,17 @@
 import { KmsEthersSigner } from "aws-kms-ethers-signer";
+import axios from "axios";
 import { BigNumber, ethers, providers } from "ethers";
 import accountAbi from "../../artifacts/contracts/MultisigAccount.sol/MultisigAccount.json";
 import factoryAbi from "../../artifacts/contracts/MultisigAccountFactory.sol/MultisigAccountFactory.json";
 import nftAbi from "../../artifacts/contracts/SimpleNft.sol/SimpleNft.json";
 import { createKmsKey } from "./awsApi";
+
+type TokenMetadata = {
+  name: string;
+  description: string;
+  image: string;
+  attributes: [Object];
+};
 
 function getAlchemyProvider() {
   return new providers.AlchemyProvider(
@@ -45,7 +53,7 @@ async function existsAddress(
   address: string
 ): Promise<boolean> {
   const code = await provider?.getCode(address);
-  return !!!code && code !== "0x";
+  return !!code && code !== "0x";
 }
 
 export async function getAccount(
@@ -103,7 +111,7 @@ export async function mintNft(toAddress: string, tokenUri: string) {
 
   const contract = new ethers.Contract(address, nftAbi.abi, getBundlerSigner());
 
-  return await contract.safeMint(toAddress, tokenUri);
+  return await contract.safeMint(toAddress, tokenUri, { gasLimit: 3000000 });
 }
 
 export async function getCollection(ownerAddress: string) {
@@ -125,7 +133,9 @@ export async function getCollection(ownerAddress: string) {
     );
     const tokenUri = await contract.tokenURI(tokenId.toString());
     console.log("tokenId", tokenId, " tokenUri", tokenUri);
-    return tokenUri;
+    const tokenMetadata = await axios.get(tokenUri);
+
+    return { metadata: tokenMetadata.data as TokenMetadata, tokenUri, tokenId };
   });
 
   return Promise.all(collections);

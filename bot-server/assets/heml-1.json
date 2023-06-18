@@ -1,0 +1,9 @@
+{
+  "name": "Viking's Helm - Empowerment Link Games Item",
+  "description": "Empowerment Link Games Item is game item. Owner can use this item to play game.",
+  "image": "https://gateway.pinata.cloud/ipfs/QmX8qjm3QPCYKWqw6XUWTv55bwPWq3cj3YL3GgWbVyS4SA",
+  "attributes": [
+    { "trait_type": "Type", "value": "equipment" },
+    { "trait_type": "Rarity", "value": "legendary" }
+  ]
+}

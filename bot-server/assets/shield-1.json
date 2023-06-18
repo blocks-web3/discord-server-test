@@ -1,0 +1,9 @@
+{
+  "name": "Soldier's Shield - Empowerment Link Games Item",
+  "description": "Empowerment Link Games Item is game item. Owner can use this item to play game.",
+  "image": "https://gateway.pinata.cloud/ipfs/QmPtjQPi13nWJmJsMrBG1e6umbD9qPL257rZhiHznvYaAv",
+  "attributes": [
+    { "trait_type": "Type", "value": "equipment" },
+    { "trait_type": "Rarity", "value": "normal" }
+  ]
+}

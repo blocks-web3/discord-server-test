@@ -2,23 +2,28 @@ import { CacheType, CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { CustomCommand } from ".";
 import { getOrCreateAccount, mintNft } from "../api/walletApi";
 
-const nftAssets = new Map<string, NftAsset>();
-type NftAsset = {
-  contractAddress: string;
-  tokenUri: string;
+// TODO: マスタデータとしてDB管理する
+const nftAssets: { [key: string]: nftAsset } = {
+  "sword-1": {
+    contractAddress: process.env.NFT_CONTRACT_ADDR!!,
+    tokenUriHash: "QmUYoAFuPjeZ63Cmb5LbfQ7GdqS43kGwWvoLpZZcm2sdBP",
+  },
+  "shield-1": {
+    contractAddress: process.env.NFT_CONTRACT_ADDR!!,
+    tokenUriHash: "QmVJbsSF9TNsajM2b8DsvK5bkAMF2UrCWGcsRbC93FqKNx",
+  },
+  "helm-1": {
+    contractAddress: process.env.NFT_CONTRACT_ADDR!!,
+    tokenUriHash: "QmRvGEYKFYg9gKWydJis8NtAVnU81P9MM7fAvLTkGaWrBz",
+  },
 };
 
-nftAssets.set("ticket-1", {
-  contractAddress: process.env.NFT_CONTRACT_ADDR!!,
-  tokenUri:
-    "https://magenta-few-pig-492.mypinata.cloud/ipfs/QmXEchKpCQCioNfdSmf31mqKgyC8kc7wJ11HQVVSvP1Ezu/metadata.json",
-});
+type nftAssetId = keyof typeof nftAssets;
 
-nftAssets.set("item-1", {
-  contractAddress: process.env.NFT_CONTRACT_ADDR!!,
-  tokenUri:
-    "https://magenta-few-pig-492.mypinata.cloud/ipfs/QmXEchKpCQCioNfdSmf31mqKgyC8kc7wJ11HQVVSvP1Ezu/metadata.json",
-});
+type nftAsset = {
+  contractAddress: string;
+  tokenUriHash: string;
+};
 
 const command: CustomCommand = {
   data: new SlashCommandBuilder()
@@ -30,31 +35,37 @@ const command: CustomCommand = {
     .addStringOption((option) =>
       option
         .setName("nft-asset-id")
-        .setDescription(` "ticket-1","item-1"から選択してください`)
+        .setDescription(` 付与したいアセットを選択してください`)
         .setRequired(true)
+        .addChoices(
+          ...Object.entries(nftAssets).map((entry) => {
+            return { name: entry[0], value: entry[0] };
+          })
+        )
     ),
   execute: executeLogic,
 };
 
 async function executeLogic(interaction: CommandInteraction<CacheType>) {
   const toUser = interaction.options.get("to-user")?.user;
-  const nftAssetId = interaction.options.get("nft-asset-id")?.value as string;
+  const nftAssetId = interaction.options.get("nft-asset-id")
+    ?.value as nftAssetId;
   await interaction.deferReply({
     fetchReply: true,
     ephemeral: true,
   });
   const account = await getOrCreateAccount(toUser?.id!!);
 
-  const nftAsset = nftAssets.get(nftAssetId);
+  const nftAsset = nftAssets[nftAssetId];
   if (!nftAsset) {
-    const msg = [`nft asset not found.`];
+    const msg = [`nft asset not found. nft-asset-id: ${nftAssetId}`];
     await interaction.followUp({ content: msg.join("\n") });
     return;
   }
 
   const result = await mintNft(
     account.walletContract.address,
-    nftAsset.tokenUri
+    nftAsset.tokenUriHash
   );
 
   const msg = [
@@ -64,7 +75,6 @@ async function executeLogic(interaction: CommandInteraction<CacheType>) {
     `target user:${toUser?.username}`,
     `to address:${account.walletContract.address}`,
     // `token id:${tokenId}`, TODO tokenIdを取得する
-    result,
   ];
   await interaction.followUp({ content: msg.join("\n") });
   return;
