@@ -3,9 +3,9 @@ import {
   Client,
   Events,
   GatewayIntentBits,
+  GuildMember,
   Interaction,
   Message,
-  TextBasedChannel,
 } from "discord.js";
 import dotenv from "dotenv";
 import generate from "./api/generate";
@@ -42,15 +42,14 @@ client.on(Events.MessageCreate, async (message: Message) => {
   }
 });
 
-client.on(Events.ChannelPinsUpdate, async (channel: TextBasedChannel) => {
-  console.log(channel);
+client.on(Events.GuildMemberAdd, async (member: GuildMember) => {
+  console.log(member);
   const generated = await generate(
-    `${channel}さんがコミュニティに参加したので、ウェルカムメッセージをお願いします。`,
+    `${member.user.username}さんがコミュニティに参加したので、ウェルカムメッセージをお願いします。`,
     history
   );
   if (generated) {
-    channel.send(generated);
-    updateHistory([generated]);
+    member.dmChannel?.send(generated);
   }
 });
 
@@ -88,8 +87,8 @@ function updateHistory(message: string[]) {
  */
 async function initCommands() {
   // 一度全ての設定を削除
-  const guild = client.guilds.cache.get("1118228068079784019");
-  await guild?.commands.set([]);
+  // const guild = client.guilds.cache.get("1118228068079784019");
+  // await guild?.commands.set([]);
 
   const commandSetResult = await client.application?.commands.set(
     commands.map((command) => command.data)
