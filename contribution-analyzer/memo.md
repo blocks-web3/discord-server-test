@@ -3,6 +3,7 @@
 集計
 精度評価レポート
 issue_classifierをissue_detectorにリネーム
+コストの算出
 
 ## ロジック <!-- omit in toc -->
 - 困りごとメッセージの抽出
