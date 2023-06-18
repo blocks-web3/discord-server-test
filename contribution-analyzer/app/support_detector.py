@@ -1,16 +1,26 @@
 from typing import Optional, List
 from langchain.chat_models import ChatOpenAI
-from app.issue_classifier_prompt import ISSUE_CLASSIFIER_PROMPT
+from app.support_detector_prompt import SUPPORT_DETECTOR_PROMPT
 from pydantic import BaseModel, Field
 import re
 
 
-class IssueClassifier(BaseModel):
+class SupportDetector(BaseModel):
     llm: ChatOpenAI = Field(default=ChatOpenAI(model_name="gpt-3.5-turbo-0613"))
 
-    def evaluate(self, messages) -> List[str]:
+    def evaluate(self, question, messages) -> List[str]:
+        """ユーザの質問・疑問・困り事に対して解決に導いたメッセージを判別する。
+
+        Args:
+            question (Dict): id, content（メッセージ）が定義されたDict
+            messages (List[Dict]): 会話順（会話時刻の昇順）にソートされたid, contentを定義したDict
+
+        Returns:
+            List[str]: 解決に導いたメッセージIDのリスト
+        """
+        question = self._format_messages([question])
         input_data = self._format_messages(messages)
-        prompt = ISSUE_CLASSIFIER_PROMPT.format(messages=input_data)
+        prompt = SUPPORT_DETECTOR_PROMPT.format(question=question, messages=input_data)
         result = self.llm.predict(prompt)
         # プロンプトで出力フォーマットを指示する方法もあるが、結果が安定しないケースがあるためルールベースで変換する。
         return self._format_result(result)
@@ -37,12 +47,14 @@ class IssueClassifier(BaseModel):
 
 
 if __name__ == "__main__":
-    testee = IssueClassifier()
-    sample = [
+    testee = SupportDetector()
+    sample_q = {"id": 1, "content": "申し込み方法がわからない"}
+    sample_messages = [
         {"id": 10, "content": "新しいプロジェクトが開始した"},
         {"id": 11, "content": "どんなプロジェクトですか？"},
-        {"id": 12, "content": "6/12のイベント会場はどこですか"},
+        {"id": 12, "content": "HPから申し込みできます。"},
+        {"id": 13, "content": "6/12のイベント会場はどこですか"},
     ]
-    print(testee._format_messages(sample))
-    r = testee.evaluate(sample)
+    print(testee._format_messages(sample_messages))
+    r = testee.evaluate(sample_q, sample_messages)
     print(r)
