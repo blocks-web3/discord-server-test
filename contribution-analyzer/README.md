@@ -24,7 +24,7 @@ poetry install
 ```
 # https://platform.openai.com/account/api-keys から APIキーを取得
 export OPENAI_API_KEY=${API KEY}
-PYTHONPATH=./ python execute.py
+PYTHONPATH=./ python analyze.py
 ```
 
 ## 3. フォルダ構成
