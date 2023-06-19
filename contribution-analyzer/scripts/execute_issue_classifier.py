@@ -1,5 +1,5 @@
 from typing import List
-from app.issue_classifier import IssueClassifier
+from issue_detector import IssueDetector
 import pandas as pd
 from pathlib import Path
 import matplotlib.pyplot as plt
@@ -11,7 +11,7 @@ import csv
 class Report:
     def _report(self, data_path: Path, issues: List[str]):
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        report_dir = Path("report") / "issue_classifier"
+        report_dir = Path("report") / "issue_detector"
 
         with open(report_dir / "condition.csv", mode="a", newline="") as file:
             writer = csv.writer(file)
@@ -40,12 +40,12 @@ class Report:
     def _execute_classifier(self, data_path: Path) -> List[str]:
         df = pd.read_json(str(data_path), lines=True)
         messages = df[["id", "content"]].to_dict(orient="records")
-        issue_classifier = IssueClassifier()
+        issue_detector = IssueDetector()
 
         chunks = [messages[i : i + 10] for i in range(0, len(messages), 10)]
         issues = []
         for chunk in chunks:
-            issues.extend(issue_classifier.evaluate(chunk))
+            issues.extend(issue_detector.evaluate(chunk))
         return issues
 
     def _execute_classifier_mock(self, data_path: Path) -> List[str]:

@@ -1,11 +1,11 @@
 from typing import Optional, List
-from app.issue_classifier_prompt import ISSUE_CLASSIFIER_PROMPT
+from issue_detector_prompt import ISSUE_CLASSIFIER_PROMPT
 from pydantic import BaseModel, Field
 import re
 from app.llm import Llm, DEFAULT_LLM
 
 
-class IssueClassifier(BaseModel):
+class IssueDetector(BaseModel):
     llm: Llm = Field(default=DEFAULT_LLM)
 
     def evaluate(self, messages) -> List[str]:
@@ -37,7 +37,7 @@ class IssueClassifier(BaseModel):
 
 
 if __name__ == "__main__":
-    testee = IssueClassifier()
+    testee = IssueDetector()
     sample = [
         {"id": 10, "content": "新しいプロジェクトが開始した"},
         {"id": 11, "content": "どんなプロジェクトですか？"},

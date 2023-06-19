@@ -1,4 +1,4 @@
-from app.issue_classifier import IssueClassifier
+from issue_detector import IssueDetector
 from app.support_detector import SupportDetector
 import pandas as pd
 from pathlib import Path
@@ -32,29 +32,31 @@ class Analyzer:
 
         # レコードデータを展開してDataFrameに変換
         # 質問文のmessageId, 質問者のuserId, 回答のmessageId, 回答者のuserId, 質問文, 回答
-        df = pd.DataFrame({
-            'q_id': [record['q']['id'] for record in records],
-            'q_user_id': [record['q']['author']['id'] for record in records],
-            'a_id': [record['a']['id'] for record in records],
-            'a_user_id': [record['a']['author']['id'] for record in records],
-            'q_content': [record['q']['content'] for record in records],
-            'a_content': [record['a']['content'] for record in records]
-        })
+        df = pd.DataFrame(
+            {
+                "q_id": [record["q"]["id"] for record in records],
+                "q_user_id": [record["q"]["author"]["id"] for record in records],
+                "a_id": [record["a"]["id"] for record in records],
+                "a_user_id": [record["a"]["author"]["id"] for record in records],
+                "q_content": [record["q"]["content"] for record in records],
+                "a_content": [record["a"]["content"] for record in records],
+            }
+        )
         df.to_csv(f"{report_dir}/analyzer_{timestamp}.csv", index=False)
 
     def analyze(self, jsonl_file: Path):
-        dtype = {'id': str}
+        dtype = {"id": str}
         df = pd.read_json(str(jsonl_file), lines=True, dtype=dtype)
         df = df.where(df.notnull(), None)
-        file = df.to_dict(orient='records')
+        file = df.to_dict(orient="records")
         if df.empty:
             print("no file data")
         else:
-            issue_classifier = IssueClassifier()
+            issue_detector = IssueDetector()
             support_detector = SupportDetector()
 
             # issuesに紐づくメッセージ群を取得
-            issues = issue_classifier.evaluate(file)
+            issues = issue_detector.evaluate(file)
 
             if not issues:
                 print("no question exist")
