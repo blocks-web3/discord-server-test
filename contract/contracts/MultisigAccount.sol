@@ -65,6 +65,7 @@ contract MultisigAccount is
         uint256 value,
         bytes calldata func
     ) external {
+        console.log("execute dest %s value %s func", dest, value);
         _requireFromEntryPoint();
         _call(dest, value, func);
     }
@@ -110,15 +111,22 @@ contract MultisigAccount is
         UserOperation calldata userOp,
         bytes32 userOpHash
     ) internal virtual override returns (uint256 validationData) {
+        console.log("_validateSignature %s", userOp.sender);
+
         bytes memory signature = extractECDSASignature(userOp.signature);
 
         if (!checkValidECDSASignatureFormat(signature)) {
             return SIG_VALIDATION_FAILED;
         }
+        console.log("_validateSignature2 %s", userOp.sender);
 
         bytes32 hash = userOpHash.toEthSignedMessageHash();
         address recoveredAddr = ECDSA.recover(hash, signature);
-
+        console.log(
+            "_validateSignature3 recoveredAddr %s, owner %s ",
+            recoveredAddr,
+            owner
+        );
         // Note, that we should abstain from using the require here in order to allow for fee estimation to work
         if (recoveredAddr != owner) {
             return SIG_VALIDATION_FAILED;

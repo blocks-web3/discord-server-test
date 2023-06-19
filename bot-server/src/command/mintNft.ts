@@ -71,10 +71,10 @@ async function executeLogic(interaction: CommandInteraction<CacheType>) {
   const msg = [
     `complete minting token.`,
     ``,
-    `result: https://mumbai.polygonscan.com/tx/${result.hash}`,
+    // `result: https://mumbai.polygonscan.com/tx/${result.hash}`,
+    `result: https://blockscout.com/astar/tx/${result.hash}`,
     `target user:${toUser?.username}`,
     `to address:${account.walletContract.address}`,
-    // `token id:${tokenId}`, TODO tokenIdを取得する
   ];
   await interaction.followUp({ content: msg.join("\n") });
   return;

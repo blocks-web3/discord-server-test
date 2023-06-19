@@ -19,7 +19,6 @@ import "./Helpers.sol";
 import "./NonceManager.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "hardhat/console.sol";
 
 contract EntryPoint is
     IEntryPoint,
@@ -301,9 +300,10 @@ contract EntryPoint is
 
         IPaymaster.PostOpMode mode = IPaymaster.PostOpMode.opSucceeded;
         if (callData.length > 0) {
-            bool success = Exec.call(mUserOp.sender, 0, callData, callGasLimit);
+            // bool success = Exec.call(mUserOp.sender, 0, callData, callGasLimit);
+            (bool success, bytes memory result) = mUserOp.sender.call(callData);
             if (!success) {
-                bytes memory result = Exec.getReturnData(REVERT_REASON_MAX_LEN);
+                // bytes memory result = Exec.getReturnData(REVERT_REASON_MAX_LEN);
                 if (result.length > 0) {
                     emit UserOperationRevertReason(
                         opInfo.userOpHash,

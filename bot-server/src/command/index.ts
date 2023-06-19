@@ -8,6 +8,7 @@ import getCollection from "./getCollection";
 import getRank from "./getRank";
 import mintNft from "./mintNft";
 import sample from "./sample";
+import sendNft from "./sendNft";
 
 type CustomCommand = {
   data: Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
@@ -17,5 +18,5 @@ type CustomCommand = {
   ) => Promise<void>;
 };
 
-export default [sample, getRank, mintNft, getCollection];
+export default [sample, getRank, mintNft, getCollection, sendNft];
 export type { CustomCommand };

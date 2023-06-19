@@ -17,7 +17,8 @@ function getNetwork1(url: string) {
 
 function getNetwork(name: string) {
   return getNetwork1(
-    `https://${name}.g.alchemy.com/v2/${process.env.ALCHEMY_APIKEY}`
+    // `https://${name}.g.alchemy.com/v2/${process.env.ALCHEMY_APIKEY}`
+    `https://evm.astar.network`
   );
   // return https://polygon-mumbai.g.alchemy.com/v2/SbQkCjN2CwBogDgyPzHWNGUNFyIE8ELc
 }
@@ -41,6 +42,7 @@ const config: HardhatUserConfig = {
     sepolia: getNetwork("sepolia"),
     proxy: getNetwork1("http://localhost:8545"),
     mumbai: getNetwork("polygon-mumbai"),
+    astar: getNetwork("astar-mainnet"),
   },
   mocha: {
     timeout: 10000,
