@@ -1,38 +1,38 @@
 {
-  "rankingId": "20230620_020503_556458",
+  "rankingId": "20230620_083328_320130",
   "ranking": [
     {
       "user_id": "209242057460547584",
       "name": "illshin",
       "rank": 1,
-      "contribution_score": 145.7,
+      "contribution_score": 154.7,
       "message_count": 29,
       "reaction_count": 0,
       "message_quality": 136,
       "participation_score": 0,
-      "support_score": 4.0,
-      "violation_score": 0
-    },
-    {
-      "user_id": "753062283772690452",
-      "name": "keni8655",
-      "rank": 2,
-      "contribution_score": 11.7,
-      "message_count": 4,
-      "reaction_count": 0,
-      "message_quality": 1,
-      "participation_score": 0,
-      "support_score": 1.0,
+      "support_score": 5.0,
       "violation_score": 0
     },
     {
       "user_id": "944816063009423371",
       "name": "mashharuki",
-      "rank": 3,
+      "rank": 2,
       "contribution_score": 8.7,
       "message_count": 2,
       "reaction_count": 0,
       "message_quality": 11,
+      "participation_score": 0,
+      "support_score": 0.0,
+      "violation_score": 0
+    },
+    {
+      "user_id": "753062283772690452",
+      "name": "keni8655",
+      "rank": 3,
+      "contribution_score": 2.7,
+      "message_count": 4,
+      "reaction_count": 0,
+      "message_quality": 1,
       "participation_score": 0,
       "support_score": 0.0,
       "violation_score": 0
