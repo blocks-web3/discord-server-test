@@ -1,0 +1,14 @@
+{
+   "rankingId":"001",
+   "userId":"200",
+   "contributionMessages":[
+      {
+         "relatedMessage":"プロダクトの提出期限はいつですか？",
+         "message":"6/20の23:59までです。"
+      },
+      {
+         "relatedMessage":"21日に開催されるイベント会場はどこでしょうか？",
+         "message":"https://hoge.com/access を見てください"
+      }
+   ]
+}

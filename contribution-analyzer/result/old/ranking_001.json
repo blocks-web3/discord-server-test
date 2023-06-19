@@ -1,0 +1,13 @@
+{
+  "id": "1",
+  "rankingId": "ranking_1",
+  "userId": "user_1",
+  "rank": "1",
+  "contributionScore": 100,
+  "messageCount": 50,
+  "reactionCount": 20,
+  "messageQuality": 80,
+  "participationScore": 90,
+  "supportScore": 70,
+  "violationScore": 10
+}

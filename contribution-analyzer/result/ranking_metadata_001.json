@@ -1,0 +1,6 @@
+{
+  "rankingId":"001",
+  "startDatetime": "2023-04-01T00:00:00.000Z",
+  "endDatetime": "2023-04-30T23:59:59.999Z",
+  "channels": ["all"]
+}

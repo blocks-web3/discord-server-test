@@ -1,6 +1,7 @@
 # flake8: noqa
 from langchain.prompts.prompt import PromptTemplate
 
+# 英語表記にすることで精度・コストメリットあるが理解しやすさを優先して日本語表記にしている。実運用では英語表記にする。
 _TEMPLATE = """
 あなたはDiscordサーバの管理者です。管理者としてユーザの困り事を検知してください。
 Discordの使い方がわからない、イベントの参加方法がわからないなどユーザの様々な問い合わせに対して検知をしてください。
