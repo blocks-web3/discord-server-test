@@ -1,78 +1,44 @@
-from app.issue_classifier import IssueClassifier
-from app.support_detector import SupportDetector
 import pandas as pd
 from pathlib import Path
+from pydantic import BaseModel, Field
+from app.contribution_stats import ContributionStats
+from app.support_score_calculator import SupportScoreCalculator
 from datetime import datetime
+import json
 
 
-class Analyzer:
-    def _get_target_message(self, message_objects, message_id):
-        for obj in message_objects:
-            obj_id = obj["id"]
-            if obj_id == message_id:
-                return obj
-
-    def _get_reference_messages(self, message_objects, question_id):
-        messages = []
-        reference_ids = []
-        for obj in message_objects:
-            referenced_message = obj.get("referenced_message")
-            if referenced_message:
-                obj_id = obj.get("id")
-                parent_id = referenced_message["id"]
-                if parent_id == question_id or parent_id in reference_ids:
-                    messages.append(obj)
-                    # レコードが生成順にソートされる前提。
-                    reference_ids.append(obj_id)
-        return messages
-
-    def _report(self, records):
-        report_dir = Path("report") / "analyze"
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-
-        # レコードデータを展開してDataFrameに変換
-        # 質問文のmessageId, 質問者のuserId, 回答のmessageId, 回答者のuserId, 質問文, 回答
-        df = pd.DataFrame({
-            'q_id': [record['q']['id'] for record in records],
-            'q_user_id': [record['q']['author']['id'] for record in records],
-            'a_id': [record['a']['id'] for record in records],
-            'a_user_id': [record['a']['author']['id'] for record in records],
-            'q_content': [record['q']['content'] for record in records],
-            'a_content': [record['a']['content'] for record in records]
-        })
-        df.to_csv(f"{report_dir}/analyzer_{timestamp}.csv", index=False)
+class Analyzer(BaseModel):
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+    support_score_calculator: SupportScoreCalculator = Field(default=SupportScoreCalculator(timestamp=timestamp))
+    contribution_stats: ContributionStats = Field(default=ContributionStats(timestamp=timestamp))
 
     def analyze(self, jsonl_file: Path):
-        dtype = {'id': str}
-        df = pd.read_json(str(jsonl_file), lines=True, dtype=dtype)
+        # 分析対象のデータはDiscordAPIから取得できるメッセージの履歴をjsonl形式で保存したものを想定。
+        df = pd.read_json(str(jsonl_file), lines=True, dtype={"id": str})
         df = df.where(df.notnull(), None)
-        file = df.to_dict(orient='records')
         if df.empty:
-            print("no file data")
-        else:
-            issue_classifier = IssueClassifier()
-            support_detector = SupportDetector()
+            raise ValueError("data is empty")
+        contribution_stats_df = self.contribution_stats.calculate_satats(df)
 
-            # issuesに紐づくメッセージ群を取得
-            issues = issue_classifier.evaluate(file)
+        messages = df.to_dict(orient="records")
+        # ChatGPTを使って支援度を算出する。
+        support_scores_df = self.support_score_calculator.calculate(messages)
 
-            if not issues:
-                print("no question exist")
-            else:
-                records = []
-                for question_id in issues:
-                    question = self._get_target_message(file, question_id)
-                    if not question:
-                        print("targe question not found")
-                    else:
-                        refrences = self._get_reference_messages(file, question_id)
-                        if not refrences:
-                            print("no refrence message")
-                        else:
-                            # メッセージ群の中で解決に貢献したメッセージを取得
-                            answers_id = support_detector.evaluate(question, refrences)
-                            for answer_id in answers_id:
-                                answer = self._get_target_message(file, answer_id)
-                                records.append({"q": question, "a": answer})
-                # 質問と回答バインド情報をcsv出力
-                self._report(records)
+        result_df = contribution_stats_df.merge(
+            support_scores_df, how="left", left_on="user_id", right_on="answer_user_id"
+        )
+        result_df = self.contribution_stats.calculate_contribution_score(result_df)
+        result_df = self.contribution_stats.filter_columns(result_df)
+        self._save_result(result_df)
+        self._save_json(result_df)
+
+    def _save_result(self, df):
+        report_dir = Path("result") / "tmp"
+        df.to_csv(report_dir / f"ranking_{self.timestamp}.csv", index=False)
+
+    def _save_json(self, df):
+        report_dir = Path("result")
+        ranking = df.to_dict(orient="records")
+        data = {"rankingId": self.timestamp, "ranking": ranking}
+        with open(report_dir / f"ranking_{self.timestamp}.json", "w") as f:
+            json.dump(data, f, indent=2)

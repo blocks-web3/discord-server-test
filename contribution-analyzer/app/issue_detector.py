@@ -1,14 +1,21 @@
 from typing import Optional, List
-from langchain.chat_models import ChatOpenAI
-from app.issue_classifier_prompt import ISSUE_CLASSIFIER_PROMPT
+from app.issue_detector_prompt import ISSUE_CLASSIFIER_PROMPT
 from pydantic import BaseModel, Field
 import re
+from app.llm import Llm, DEFAULT_LLM
 
 
-class IssueClassifier(BaseModel):
-    llm: ChatOpenAI = Field(default=ChatOpenAI(model_name="gpt-3.5-turbo-0613"))
+class IssueDetector(BaseModel):
+    llm: Llm = Field(default=DEFAULT_LLM)
 
     def evaluate(self, messages) -> List[str]:
+        results = []
+        for i in range(0, len(messages), 10):
+            batch = messages[i : i + 10]
+            results.extend(self._inner_evaluate(batch))
+        return results
+
+    def _inner_evaluate(self, messages) -> List[str]:
         input_data = self._format_messages(messages)
         prompt = ISSUE_CLASSIFIER_PROMPT.format(messages=input_data)
         result = self.llm.predict(prompt)
@@ -37,7 +44,7 @@ class IssueClassifier(BaseModel):
 
 
 if __name__ == "__main__":
-    testee = IssueClassifier()
+    testee = IssueDetector()
     sample = [
         {"id": 10, "content": "新しいプロジェクトが開始した"},
         {"id": 11, "content": "どんなプロジェクトですか？"},

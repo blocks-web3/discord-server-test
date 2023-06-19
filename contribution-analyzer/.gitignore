@@ -4,7 +4,8 @@ qa.jsonl
 freetalk.jsonl
 data/*
 result/*.csv
-result/tmp/*
+result/tmp/*.csv
+result/tmp/*.json
 
 .DS_Store
 .huskyrc.json

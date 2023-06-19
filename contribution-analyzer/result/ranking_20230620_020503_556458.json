@@ -1,0 +1,101 @@
+{
+  "rankingId": "20230620_020503_556458",
+  "ranking": [
+    {
+      "user_id": "209242057460547584",
+      "name": "illshin",
+      "rank": 1,
+      "contribution_score": 145.7,
+      "message_count": 29,
+      "reaction_count": 0,
+      "message_quality": 136,
+      "participation_score": 0,
+      "support_score": 4.0,
+      "violation_score": 0
+    },
+    {
+      "user_id": "753062283772690452",
+      "name": "keni8655",
+      "rank": 2,
+      "contribution_score": 11.7,
+      "message_count": 4,
+      "reaction_count": 0,
+      "message_quality": 1,
+      "participation_score": 0,
+      "support_score": 1.0,
+      "violation_score": 0
+    },
+    {
+      "user_id": "944816063009423371",
+      "name": "mashharuki",
+      "rank": 3,
+      "contribution_score": 8.7,
+      "message_count": 2,
+      "reaction_count": 0,
+      "message_quality": 11,
+      "participation_score": 0,
+      "support_score": 0.0,
+      "violation_score": 0
+    },
+    {
+      "user_id": "830279052760842291",
+      "name": "YasuYasu_onFire",
+      "rank": 4,
+      "contribution_score": 2.4,
+      "message_count": 2,
+      "reaction_count": 0,
+      "message_quality": 2,
+      "participation_score": 0,
+      "support_score": 0.0,
+      "violation_score": 0
+    },
+    {
+      "user_id": "1003319512810135572",
+      "name": "kyok(\u4eee)",
+      "rank": 5,
+      "contribution_score": 1.7,
+      "message_count": 2,
+      "reaction_count": 0,
+      "message_quality": 1,
+      "participation_score": 0,
+      "support_score": 0.0,
+      "violation_score": 0
+    },
+    {
+      "user_id": "888023725918789662",
+      "name": "junmisak",
+      "rank": 6,
+      "contribution_score": 1.2,
+      "message_count": 1,
+      "reaction_count": 0,
+      "message_quality": 1,
+      "participation_score": 0,
+      "support_score": 0.0,
+      "violation_score": 0
+    },
+    {
+      "user_id": "828121955843571722",
+      "name": "Nagumo",
+      "rank": 7,
+      "contribution_score": 1.0,
+      "message_count": 2,
+      "reaction_count": 0,
+      "message_quality": 0,
+      "participation_score": 0,
+      "support_score": 0.0,
+      "violation_score": 0
+    },
+    {
+      "user_id": "1088142919522848768",
+      "name": "fukumimi",
+      "rank": 8,
+      "contribution_score": 0.5,
+      "message_count": 1,
+      "reaction_count": 0,
+      "message_quality": 0,
+      "participation_score": 0,
+      "support_score": 0.0,
+      "violation_score": 0
+    }
+  ]
+}
