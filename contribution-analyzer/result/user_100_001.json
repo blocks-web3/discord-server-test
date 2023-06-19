@@ -1,0 +1,18 @@
+{
+   "rankingId":"001",
+   "userId":"100",
+   "contributionMessages":[
+      {
+         "relatedMessage":"プロダクトの提出はどうやってできますか？",
+         "message":"提出フォーム（https://hoge.com/submit)から提出できますよ！"
+      },
+      {
+         "relatedMessage":"イベント会場はどこでしょうか？",
+         "message":"東京都中央区xxxのようです。 https://hoge.com/access"
+      },
+      {
+         "relatedMessage":"IVSチケットを購入したんですが、IVS Cryptに参加するには他のチケットも必要でしょうか？",
+         "message":"IVSチケットで大丈夫のようです。"
+      }
+   ]
+}
