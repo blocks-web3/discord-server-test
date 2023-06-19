@@ -1,12 +1,12 @@
 from typing import Optional, List
-from langchain.chat_models import ChatOpenAI
+from app.llm import Llm, DEFAULT_LLM
 from app.support_detector_prompt import SUPPORT_DETECTOR_PROMPT
 from pydantic import BaseModel, Field
 import re
 
 
 class SupportDetector(BaseModel):
-    llm: ChatOpenAI = Field(default=ChatOpenAI(model_name="gpt-3.5-turbo-0613"))
+    llm: Llm = Field(default=DEFAULT_LLM)
 
     def evaluate(self, question, messages) -> List[str]:
         """ユーザの質問・疑問・困り事に対して解決に導いたメッセージを判別する。

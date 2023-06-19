@@ -1,12 +1,12 @@
 from typing import Optional, List
-from langchain.chat_models import ChatOpenAI
 from app.issue_classifier_prompt import ISSUE_CLASSIFIER_PROMPT
 from pydantic import BaseModel, Field
 import re
+from app.llm import Llm, DEFAULT_LLM
 
 
 class IssueClassifier(BaseModel):
-    llm: ChatOpenAI = Field(default=ChatOpenAI(model_name="gpt-3.5-turbo-0613"))
+    llm: Llm = Field(default=DEFAULT_LLM)
 
     def evaluate(self, messages) -> List[str]:
         input_data = self._format_messages(messages)
