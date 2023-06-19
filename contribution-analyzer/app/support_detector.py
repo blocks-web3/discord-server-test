@@ -3,10 +3,14 @@ from app.llm import Llm, DEFAULT_LLM
 from app.support_detector_prompt import SUPPORT_DETECTOR_PROMPT
 from pydantic import BaseModel, Field
 import re
+import json
+from pathlib import Path
+from datetime import datetime
 
 
 class SupportDetector(BaseModel):
     llm: Llm = Field(default=DEFAULT_LLM)
+    debug: bool = Field(default=False)
 
     def evaluate(self, question, messages) -> List[str]:
         """ユーザの質問・疑問・困り事に対して解決に導いたメッセージを判別する。
@@ -18,12 +22,25 @@ class SupportDetector(BaseModel):
         Returns:
             List[str]: 解決に導いたメッセージIDのリスト
         """
+        if self.debug:
+            self._save_input(question, messages)
         question = self._format_messages([question])
         input_data = self._format_messages(messages)
         prompt = SUPPORT_DETECTOR_PROMPT.format(question=question, messages=input_data)
         result = self.llm.predict(prompt)
         # プロンプトで出力フォーマットを指示する方法もあるが、結果が安定しないケースがあるためルールベースで変換する。
         return self._format_result(result)
+
+    def _save_input(self, question: dict, messages: list):
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        question = {"id": question["id"], "content": question["content"].replace("\n", "\\n")}
+        json_data = json.dumps(question, ensure_ascii=False)
+        with open(Path("result") / "tmp" / f"question_{timestamp}.json", "w", encoding="utf-8") as file:
+            file.write(json_data)
+        messages = [{"id": m["id"], "content": m["content"].replace("\n", "\\n")} for m in messages]
+        json_data = json.dumps(messages, ensure_ascii=False)
+        with open(Path("result") / "tmp" / f"messages_{timestamp}.json", "w", encoding="utf-8") as file:
+            file.write(json_data)
 
     def _format_messages(self, messages) -> str:
         text = ""
