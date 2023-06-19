@@ -57,7 +57,7 @@ class Report:
             "1118940384001806467",
         ]
 
-    def execute(self, data_path: Path, mock: bool = False):
+    def evaluate(self, data_path: Path, mock: bool = False):
         df = pd.read_json(str(data_path), lines=True, dtype={"id": str})
         if mock:
             issues = self._execute_classifier_mock(df.copy())
@@ -70,4 +70,4 @@ class Report:
 if __name__ == "__main__":
     testee = Report()
     data_path = Path("data") / "messages.jsonl"
-    testee.execute(data_path, mock=False)
+    testee.evaluate(data_path, mock=False)
