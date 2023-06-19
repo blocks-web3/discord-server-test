@@ -1,8 +1,12 @@
 APIKEY
+arrayify
 ASTAR
 davinci
+ethersproject
 Hackathon
 IERC
+keccak
 maticmum
+Numberish
 openai
 SECG

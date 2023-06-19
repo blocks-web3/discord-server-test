@@ -2,17 +2,21 @@ import { Contract, Signer, Wallet } from "ethers";
 import hre, { ethers } from "hardhat";
 
 export type MultisigWallet = {
-  signer: Wallet;
+  signer: Signer;
   walletContract: Contract;
 };
 
 export async function createWallet(
   factory: Contract,
   salt: number,
-  bundlerSigner: Signer
+  bundlerSigner: Signer,
+  ownerSigner?: Signer
 ): Promise<MultisigWallet> {
-  const signer = getAccount();
-  const walletAddress = await factory.getAddress(signer.address, salt);
+  const signer = ownerSigner || getAccount();
+  const walletAddress = await factory.getAddress(
+    await signer.getAddress(),
+    salt
+  );
 
   const artifact = await hre.deployments.getArtifact("MultisigAccount");
   const walletContract = new ethers.Contract(

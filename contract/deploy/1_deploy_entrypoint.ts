@@ -15,12 +15,13 @@ const deployEntryPoint: DeployFunction = async function (
     await getEtherBalance(servicerAddress)
   );
 
-  await hre.deployments.deploy("EntryPoint", {
+  const ep = await hre.deployments.deploy("EntryPoint", {
     from: servicerAddress,
     args: [],
-    gasLimit: 6e6,
+    gasLimit: 7e6,
     deterministicDeployment: true,
   });
+  console.log("==ep, addr=", ep.address);
 };
 
 export default deployEntryPoint;

@@ -87,8 +87,8 @@ function updateHistory(message: string[]) {
  */
 async function initCommands() {
   // 一度全ての設定を削除
-  // const guild = client.guilds.cache.get("1118228068079784019");
-  // await guild?.commands.set([]);
+  const guild = client.guilds.cache.get("1118228068079784019");
+  await guild?.commands.set([]);
 
   const commandSetResult = await client.application?.commands.set(
     commands.map((command) => command.data)
