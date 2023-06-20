@@ -108,7 +108,7 @@ sequenceDiagram
 
 
 
-詳細は[issue_detector](report/issue_detector/README.md), [support_score](report/support_score/README.md)参照。
+詳細は[issue_detector](report/issue_detector)、[support_score](report/support_score)参照。
 
 
 ## 5. コスト
