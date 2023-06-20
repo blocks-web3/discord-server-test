@@ -18,12 +18,12 @@ class Analyzer(BaseModel):
         df = df.where(df.notnull(), None)
         if df.empty:
             raise ValueError("data is empty")
-        contribution_stats_df = self.contribution_stats.calculate_satats(df)
 
         messages = df.to_dict(orient="records")
         # ChatGPTを使って支援度を算出する。
         support_scores_df = self.support_score_calculator.calculate(messages)
 
+        contribution_stats_df = self.contribution_stats.calculate_satats(df)
         result_df = contribution_stats_df.merge(
             support_scores_df, how="left", left_on="user_id", right_on="answer_user_id"
         )
