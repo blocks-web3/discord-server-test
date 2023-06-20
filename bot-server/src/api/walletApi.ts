@@ -1,10 +1,10 @@
 import { KmsEthersSigner } from "aws-kms-ethers-signer";
-import axios from "axios";
 import { BigNumber, Contract, Signer, ethers, providers } from "ethers";
-import accountAbi from "../../artifacts/contracts/MultisigAccount.sol/MultisigAccount.json";
-import factoryAbi from "../../artifacts/contracts/MultisigAccountFactory.sol/MultisigAccountFactory.json";
-import nftAbi from "../../artifacts/contracts/SimpleNft.sol/SimpleNft.json";
-import epAbi from "../../artifacts/contracts/core/EntryPoint.sol/EntryPoint.json";
+import accountAbi from "../../../contract/artifacts/contracts/SimpleAccount.sol/SimpleAccount.json";
+import factoryAbi from "../../../contract/artifacts/contracts/SimpleAccountFactory.sol/SimpleAccountFactory.json";
+import nftAbi from "../../../contract/artifacts/contracts/SimpleNft.sol/SimpleNft.json";
+import pmAbi from "../../../contract/artifacts/contracts/VerifyingPaymaster.sol/VerifyingPaymaster.json";
+import epAbi from "../../../contract/artifacts/contracts/core/EntryPoint.sol/EntryPoint.json";
 import { UserOperation, getUserOpHash } from "./UserOperation";
 import { createKmsKey } from "./awsApi";
 
@@ -62,6 +62,16 @@ function getEntryPoint(
   );
 }
 
+function getPayMaster(
+  signerOrProvider: ethers.providers.Provider | ethers.Signer
+) {
+  return new ethers.Contract(
+    process.env.PAY_MASTER_ADDR!!,
+    pmAbi.abi,
+    signerOrProvider
+  );
+}
+
 async function existsAddress(
   provider: ethers.providers.Provider,
   address: string
@@ -72,7 +82,7 @@ async function existsAddress(
 
 export async function getAccount(
   discordUserId: string,
-  salt: number = 0
+  salt: number = 1
 ): Promise<{
   kmsSigner: ethers.Signer;
   walletContract: ethers.Contract;
@@ -100,7 +110,7 @@ export async function getAccount(
 
 export async function getOrCreateAccount(
   discordUserId: string,
-  salt: number = 0
+  salt: number = 1
 ) {
   const bundlerSigner = getBundlerSigner();
 
@@ -129,14 +139,6 @@ export async function mintNft(toAddress: string, tokenUri: string) {
   return await contract.safeMint(toAddress, tokenUri, { gasLimit: 3000000 });
 }
 
-export async function sendNft(
-  fromUserId: string,
-  toAddress: string,
-  tokenId: number
-) {
-  const userAccount = await getOrCreateAccount(fromUserId);
-  return await sendErc721(userAccount, toAddress, tokenId);
-}
 export async function sendErc721(
   userAccount: {
     kmsSigner: Signer;
@@ -151,6 +153,7 @@ export async function sendErc721(
     throw Error("not found nft contract address.");
   }
   const bundlerSigner = getBundlerSigner();
+
   const network = await bundlerSigner.provider.getNetwork();
 
   const erc721Contract = new ethers.Contract(
@@ -159,6 +162,9 @@ export async function sendErc721(
     getBundlerSigner()
   );
   const ep = getEntryPoint(bundlerSigner);
+  const pm = getPayMaster(bundlerSigner);
+  const result = await pm.deposit({ value: ethers.utils.parseEther("2") });
+  console.log(`==deposit=`, result);
 
   const userOp = sendErc721Operation(
     erc721Contract,
@@ -166,16 +172,32 @@ export async function sendErc721(
     toAddress,
     tokenId
   );
+  userOp.paymasterAndData = await getPaymasterAndData(
+    userOp,
+    getPayMaster(bundlerSigner),
+    bundlerSigner
+  );
+
   const opHash = getUserOpHash(userOp, ep, network.chainId);
   console.log("opHash", opHash);
-  // userOp.signature = "0x" + (await userAccount.kmsSigner.signMessage(opHash));
+
   const sig = await userAccount.kmsSigner.signMessage(
     ethers.utils.arrayify(opHash)
   );
   userOp.signature = "0x" + sig;
   console.log("userOp", userOp);
   const bundlerAddress = await bundlerSigner.getAddress();
-  return await ep.handleOps([userOp], bundlerAddress, { gasLimit: 2000000 });
+
+  const op = await ep.handleOps([userOp], bundlerAddress, {
+    gasLimit: 2000000,
+  });
+  try {
+    await op.wait();
+  } catch (e: any) {
+    console.log(e.message);
+  }
+
+  return op;
 
   // return await erc721Contract.safeTransferFrom(
   //   toAddress,
@@ -197,19 +219,15 @@ export async function getCollection(ownerAddress: string) {
     return [];
   }
 
-  const collections = [...Array(count.toNumber())].map(async (item, index) => {
+  const tokenIds = [...Array(count.toNumber())].map(async (item, index) => {
     const tokenId: BigNumber = await contract.tokenOfOwnerByIndex(
       ownerAddress,
       index
     );
-    const tokenUri = await contract.tokenURI(tokenId.toString());
-    console.log("tokenId", tokenId, " tokenUri", tokenUri);
-    const tokenMetadata = await axios.get(tokenUri);
-
-    return { metadata: tokenMetadata.data as TokenMetadata, tokenUri, tokenId };
+    return tokenId.toNumber();
   });
 
-  return Promise.all(collections);
+  return Promise.all(tokenIds);
 }
 
 function sendErc721Operation(
@@ -235,15 +253,46 @@ function sendErc721Operation(
 
   return {
     sender: fromAddr,
-    nonce: 1,
+    nonce: 0,
     initCode: "0x",
     callData: callData,
     callGasLimit: 400000,
-    verificationGasLimit: 150000, // default verification gas. will add create2 cost (3200+200*length) if initCode exists
+    verificationGasLimit: 400000, // default verification gas. will add create2 cost (3200+200*length) if initCode exists
     preVerificationGas: 2100000, // should also cover calldata cost.
     maxFeePerGas: 1,
     maxPriorityFeePerGas: 1e9,
     paymasterAndData: "0x",
     signature: "0x", // あとで設定する
   };
+}
+
+async function getPaymasterAndData(
+  userOp: UserOperation,
+  paymaster: Contract,
+  signer: Signer
+) {
+  const MOCK_VALID_UNTIL = "0x00000000deadbeef";
+  const MOCK_VALID_AFTER = "0x0000000000001234";
+  userOp.paymasterAndData = ethers.utils.hexConcat([
+    paymaster.address,
+    ethers.utils.defaultAbiCoder.encode(
+      ["uint48", "uint48"],
+      [MOCK_VALID_UNTIL, MOCK_VALID_AFTER]
+    ),
+    "0x" + "00".repeat(65),
+  ]);
+  const hash = await paymaster.getHash(
+    userOp,
+    MOCK_VALID_UNTIL,
+    MOCK_VALID_AFTER
+  );
+  const sig = await signer.signMessage(ethers.utils.arrayify(hash));
+  return ethers.utils.hexConcat([
+    paymaster.address,
+    ethers.utils.defaultAbiCoder.encode(
+      ["uint48", "uint48"],
+      [MOCK_VALID_UNTIL, MOCK_VALID_AFTER]
+    ),
+    sig,
+  ]);
 }

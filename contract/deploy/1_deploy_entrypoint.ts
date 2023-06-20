@@ -22,6 +22,14 @@ const deployEntryPoint: DeployFunction = async function (
     deterministicDeployment: true,
   });
   console.log("==ep, addr=", ep.address);
+
+  const pm = await hre.deployments.deploy("VerifyingPaymaster", {
+    from: servicerAddress,
+    args: [ep.address, servicerAddress],
+    gasLimit: 7e6,
+    deterministicDeployment: true,
+  });
+  console.log("==pm, addr=", pm.address);
 };
 
 export default deployEntryPoint;

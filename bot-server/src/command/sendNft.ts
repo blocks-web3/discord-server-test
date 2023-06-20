@@ -23,7 +23,7 @@ async function executeLogic(interaction: CommandInteraction<CacheType>) {
   const tokenId = interaction.options.get("token-id")?.value as number;
   await interaction.deferReply({
     fetchReply: true,
-    ephemeral: true,
+    ephemeral: false,
   });
   const toUserAccount = await getOrCreateAccount(toUser?.id!!);
   const userAccount = await getOrCreateAccount(interaction.user.id);

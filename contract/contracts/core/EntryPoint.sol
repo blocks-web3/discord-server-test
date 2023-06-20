@@ -18,7 +18,7 @@ import "./SenderCreator.sol";
 import "./Helpers.sol";
 import "./NonceManager.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
+import "hardhat/console.sol";
 
 contract EntryPoint is
     IEntryPoint,
@@ -550,8 +550,13 @@ contract EntryPoint is
                 missingAccountFunds = bal > requiredPrefund
                     ? 0
                     : requiredPrefund - bal;
+                console.log(
+                    "AA21: sender %s bal %d  missingAccountFunds %s",
+                    sender,
+                    bal,
+                    missingAccountFunds
+                );
             }
-
             try
                 IAccount(sender).validateUserOp{
                     gas: mUserOp.verificationGasLimit
@@ -569,6 +574,12 @@ contract EntryPoint is
             if (paymaster == address(0)) {
                 DepositInfo storage senderInfo = deposits[sender];
                 uint256 deposit = senderInfo.deposit;
+                console.log(
+                    "AA21: sender %s deposit %d requiredPrefund %d",
+                    sender,
+                    deposit,
+                    requiredPrefund
+                );
                 if (requiredPrefund > deposit) {
                     revert FailedOp(opIndex, "AA21 didn't pay prefund");
                 }

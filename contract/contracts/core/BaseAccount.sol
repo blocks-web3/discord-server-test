@@ -8,7 +8,6 @@ import "../interfaces/IAccount.sol";
 import "../interfaces/IEntryPoint.sol";
 import "./Helpers.sol";
 import "hardhat/console.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
 
 /**
  * Basic account implementation.
@@ -46,10 +45,19 @@ abstract contract BaseAccount is IAccount {
         bytes32 userOpHash,
         uint256 missingAccountFunds
     ) external virtual override returns (uint256 validationData) {
+        console.log(
+            "validateUserOp userOp.nonce %s, missingAccountFunds %s",
+            userOp.nonce,
+            missingAccountFunds
+        );
         _requireFromEntryPoint();
+        console.log("_requireFromEntryPoint");
         validationData = _validateSignature(userOp, userOpHash);
+        console.log("_validateSignature");
         _validateNonce(userOp.nonce);
+        console.log("_validateNonce");
         _payPrefund(missingAccountFunds);
+        console.log("_payPrefund");
     }
 
     /**

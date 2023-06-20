@@ -2,7 +2,7 @@ import { ethers } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-const deployMultisigAccountFactory: DeployFunction = async function (
+const deploySimpleAccountFactory: DeployFunction = async function (
   hre: HardhatRuntimeEnvironment
 ) {
   const signer = ethers.provider.getSigner();
@@ -15,4 +15,4 @@ const deployMultisigAccountFactory: DeployFunction = async function (
   console.log("==Nft addr=", ret.address);
 };
 
-export default deployMultisigAccountFactory;
+export default deploySimpleAccountFactory;
