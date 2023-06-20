@@ -18,7 +18,7 @@ export async function createWallet(
     salt
   );
 
-  const artifact = await hre.deployments.getArtifact("MultisigAccount");
+  const artifact = await hre.deployments.getArtifact("SimpleAccount");
   const walletContract = new ethers.Contract(
     walletAddress,
     artifact.abi,

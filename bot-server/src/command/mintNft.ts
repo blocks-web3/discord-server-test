@@ -52,7 +52,7 @@ async function executeLogic(interaction: CommandInteraction<CacheType>) {
     ?.value as nftAssetId;
   await interaction.deferReply({
     fetchReply: true,
-    ephemeral: true,
+    ephemeral: false,
   });
   const account = await getOrCreateAccount(toUser?.id!!);
 
@@ -73,7 +73,6 @@ async function executeLogic(interaction: CommandInteraction<CacheType>) {
     ``,
     // `result: https://mumbai.polygonscan.com/tx/${result.hash}`,
     `result: https://blockscout.com/astar/tx/${result.hash}`,
-    `target user:${toUser?.username}`,
     `to address:${account.walletContract.address}`,
   ];
   await interaction.followUp({ content: msg.join("\n") });
